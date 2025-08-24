@@ -2,62 +2,66 @@ package com.example.basket;
 
 import org.example.BasketCalculator;
 import org.junit.jupiter.api.Test;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class BasketCalculatorTest {
+/**
+ * Unit tests for {@link BasketCalculator}.
+ *
+ * Covers:
+ *  - Individual items
+ *  - Special offers (melons and limes)
+ *  - Mixed baskets
+ *  - Edge cases (empty basket, unknown items)
+ */
+public class BasketCalculatorTest {
 
-    private final BasketCalculator calculator = new BasketCalculator();
+    @Test
+    void appleShouldCost35p() {
+        assertEquals(35, BasketCalculator.calculateTotal(List.of("Apple")));
+    }
+
+    @Test
+    void bananasShouldCost20pEach() {
+        assertEquals(40, BasketCalculator.calculateTotal(List.of("Banana", "Banana")));
+    }
+
+    @Test
+    void melonsShouldBeBuyOneGetOneFree() {
+        assertEquals(50, BasketCalculator.calculateTotal(List.of("Melon", "Melon"))); // 2 for 1
+        assertEquals(100, BasketCalculator.calculateTotal(List.of("Melon", "Melon", "Melon"))); // 3 for 2
+    }
+
+    @Test
+    void limesShouldBeThreeForTwo() {
+        assertEquals(30, BasketCalculator.calculateTotal(List.of("Lime", "Lime", "Lime"))); // 3 for 2
+        assertEquals(45, BasketCalculator.calculateTotal(List.of("Lime", "Lime", "Lime", "Lime"))); // 4 for 3
+    }
+
+    @Test
+    void mixedBasketShouldApplyAllRules() {
+        // 2 Apples = 70p
+        // 1 Banana = 20p
+        // 3 Melons = 100p (Buy One Get One)
+        // 4 Limes = 45p (3 for 2)
+        // Total = 235p
+        int total = BasketCalculator.calculateTotal(
+                List.of("Apple", "Apple", "Banana",
+                        "Melon", "Melon", "Melon",
+                        "Lime", "Lime", "Lime", "Lime")
+        );
+        assertEquals(235, total);
+    }
 
     @Test
     void emptyBasketShouldCostZero() {
-        assertEquals(0, calculator.calculateTotal(Collections.emptyList()));
+        assertEquals(0, BasketCalculator.calculateTotal(List.of()));
     }
 
     @Test
-    void singleAppleShouldCost35p() {
-        assertEquals(35, calculator.calculateTotal(Arrays.asList("Apple")));
-    }
-
-    @Test
-    void appleAndBananaTogetherShouldAddUp() {
-        assertEquals(55, calculator.calculateTotal(Arrays.asList("Apple", "Banana")));
-    }
-
-    @Test
-    void twoMelonsShouldCost50pBecauseOfBogof() {
-        assertEquals(50, calculator.calculateTotal(Arrays.asList("Melon", "Melon")));
-    }
-
-    @Test
-    void threeMelonsShouldCost100p() {
-        assertEquals(100, calculator.calculateTotal(Arrays.asList("Melon", "Melon", "Melon")));
-    }
-
-    @Test
-    void threeLimesShouldCost30pBecauseOfThreeForTwoOffer() {
-        assertEquals(30, calculator.calculateTotal(Arrays.asList("Lime", "Lime", "Lime")));
-    }
-
-    @Test
-    void fiveLimesShouldCost75p() {
-        assertEquals(75, calculator.calculateTotal(Arrays.asList("Lime", "Lime", "Lime", "Lime", "Lime")));
-    }
-
-    @Test
-    void mixedBasketShouldApplyAllOffers() {
-        // Apple (35) + Banana (20) + two Melons (50) + three Limes (30) = 135p
-        assertEquals(135, calculator.calculateTotal(
-                Arrays.asList("Apple", "Banana", "Melon", "Melon", "Lime", "Lime", "Lime")));
-    }
-
-    @Test
-    void unknownItemShouldThrowError() {
-        assertThrows(IllegalArgumentException.class,
-                () -> calculator.calculateTotal(List.of("Chocolate")));
+    void unknownItemsShouldBeIgnored() {
+        // "Orange" is ignored, only Apple counts (35p)
+        assertEquals(35, BasketCalculator.calculateTotal(List.of("Apple", "Orange")));
     }
 }

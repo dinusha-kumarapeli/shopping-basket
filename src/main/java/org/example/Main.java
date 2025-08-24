@@ -1,26 +1,29 @@
 package org.example;
 
-import java.util.Arrays;
+import org.example.BasketCalculator;
+
 import java.util.List;
 
+/**
+ * Entry point for demonstrating the BasketCalculator.
+ *
+ * This class is optional but provides a quick example
+ * of how the calculator can be used without running tests.
+ */
 public class Main {
     public static void main(String[] args) {
-        BasketCalculator calculator = new BasketCalculator();
+        // Example basket
+        List<String> basket = List.of(
+                "Apple", "Apple", "Banana",
+                "Melon", "Melon", "Melon",
+                "Lime", "Lime", "Lime", "Lime"
+        );
 
-        List<String> basket1 = Arrays.asList("Apple", "Banana", "Melon", "Melon", "Lime", "Lime", "Lime");
-        List<String> basket2 = Arrays.asList("Apple", "Apple", "Apple");
-        List<String> basket3 = Arrays.asList("Melon", "Melon", "Melon", "Melon");
-        List<String> basket4 = Arrays.asList("Lime", "Lime", "Lime", "Lime", "Lime");
+        // Calculate total
+        int total = BasketCalculator.calculateTotal(basket);
 
-        printBasketTotal(calculator, basket1);
-        printBasketTotal(calculator, basket2);
-        printBasketTotal(calculator, basket3);
-        printBasketTotal(calculator, basket4);
-    }
-
-    private static void printBasketTotal(BasketCalculator calculator, List<String> basket) {
-        int totalInPence = calculator.calculateTotal(basket);
-        String formatted = String.format("£%.2f", totalInPence / 100.0);
-        System.out.println("Basket: " + basket + " => Total: " + formatted);
+        // Print result
+        System.out.println("Basket: " + basket);
+        System.out.printf("Total cost: %dp (£%.2f)%n", total, total / 100.0);
     }
 }
